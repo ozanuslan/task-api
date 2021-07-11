@@ -1,11 +1,16 @@
 "use strict";
 
 const Event = use("App/Models/Event");
-const User = use("App/Models/User");
+const Session = use("App/Models/Session");
 
 class EventController {
   async insert({ request, response }) {
     const events = request.input("events");
+    try {
+      await Session.find(events[0].session_id);
+    } catch (error) {
+      return response.status(400).send("Session id invalid.");
+    }
     const n_event = await Event.createMany(events).catch((error) => {
       return response.status(400).send(error);
     });
@@ -25,6 +30,10 @@ class EventController {
     } catch (error) {
       return response.status(401).send({ message: error, success: false });
     }
+    if ((await Session.find(session_id)) === null)
+      return response
+        .status(400)
+        .send({ message: "Invalid session id", success: false });
 
     await Event.query()
       .where("session_id", session_id)
