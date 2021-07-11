@@ -1,29 +1,33 @@
 "use strict";
 
 const Event = use("App/Models/Event");
-const { uuid } = require("uuidv4");
+const User = use("App/Models/User");
 
 class EventController {
   async insert({ request, response }) {
-    let { session_id, user_id, email, event } = request.only([
-      "session_id",
-      "user_id",
-      "email",
-      "event",
-    ]);
-    if (session_id === undefined)
-      return response.status(400).send("session_id cannot be empty");
-    if (event === undefined)
-      return response.status(400).send("event cannot be empty");
-    if (user_id === undefined) user_id = 0;
-    if (!uuid.validate(session_id))
-      return response.status(400).send("session_id invalid");
-
-    const n_event = await Event.create({ user_id, session_id, email, event });
-
-    // console.log(n_event);
+    const events = request.input("events");
+    const n_event = await Event.createMany(events).catch((error) => {
+      return response.status(400).send(error);
+    });
 
     return { n_event };
+  }
+
+  async getAll() {
+    const data = await Event.all();
+    return { data };
+  }
+
+  async update({ request, auth, response }) {
+    const { email, password, session_id } = request.all();
+    await auth.attempt(email, password).catch((error) => {
+      return response.status(401).send("User couldn't be authenticated.");
+    });
+    const user = await User.query().where("email", email).first();
+    await Event.query()
+      .where("session_id", session_id)
+      .update({ email: email, user_id: user.id });
+    return { success: true };
   }
 }
 

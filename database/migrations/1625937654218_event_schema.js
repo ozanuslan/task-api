@@ -7,8 +7,8 @@ class EventSchema extends Schema {
   up() {
     this.create("events", (table) => {
       table.increments();
-      table.integer("user_id").unsigned();
       table.uuid("session_id");
+      table.integer("user_id").unsigned();
       table.string("email", 254);
       table.string("event", 254).notNullable();
       table.timestamps();
