@@ -27,7 +27,7 @@ class SessionController {
         return response.status(200).send({ exists: true });
       })
       .catch((error) => {
-        response.status(404).send(error);
+        response.status(404).send({ exists: true });
       });
   }
 }
