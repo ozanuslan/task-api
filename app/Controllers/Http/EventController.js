@@ -21,13 +21,14 @@ class EventController {
   async update({ request, auth, response }) {
     const { email, password, session_id } = request.all();
     await auth.attempt(email, password).catch((error) => {
-      return response.status(401).send("User couldn't be authenticated.");
+      return response
+        .status(401)
+        .send({ message: "User couldn't be authenticated.", success: false });
     });
-    const user = await User.query().where("email", email).first();
     await Event.query()
       .where("session_id", session_id)
-      .update({ email: email, user_id: user.id });
-    return { success: true };
+      .update({ email: email });
+    return { message: "Events updated successfully.", success: true };
   }
 }
 
