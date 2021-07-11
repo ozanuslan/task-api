@@ -23,5 +23,5 @@ Route.group(() => {
   Route.post("session", "SessionController.exists");
   Route.post("event", "EventController.insert");
   Route.patch("event", "EventController.update");
-  Route.get("event", "EventController.getAll");
+  Route.get("event/all", "EventController.getAll");
 }).prefix("api");
