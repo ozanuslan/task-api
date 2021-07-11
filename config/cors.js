@@ -75,7 +75,7 @@ module.exports = {
   | boolean.
   |
   */
-  credentials: false,
+  credentials: true,
 
   /*
   |--------------------------------------------------------------------------
