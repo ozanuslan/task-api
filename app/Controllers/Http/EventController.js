@@ -10,25 +10,26 @@ class EventController {
       return response.status(400).send(error);
     });
 
-    return { n_event };
+    return { events: n_event };
   }
 
   async getAll() {
-    const data = await Event.all();
-    return { data };
+    const events = await Event.all();
+    return { events };
   }
 
   async update({ request, auth, response }) {
     const { email, password, session_id } = request.all();
-    await auth.attempt(email, password).catch((error) => {
-      return response
-        .status(401)
-        .send({ message: "User couldn't be authenticated.", success: false });
-    });
+    try {
+      await auth.attempt(email, password);
+    } catch (error) {
+      return response.status(401).send({ message: error, success: false });
+    }
+
     await Event.query()
       .where("session_id", session_id)
       .update({ email: email });
-    return { message: "Events updated successfully.", success: true };
+    return { message: "Sessions updated successfully.", success: true };
   }
 }
 
