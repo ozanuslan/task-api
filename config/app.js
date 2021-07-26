@@ -146,7 +146,7 @@ module.exports = {
     | that exists will be served. Example: ['html', 'htm'].
     |
     */
-    extensions: false
+    extensions: ['html']
   },
 
   locales: {
